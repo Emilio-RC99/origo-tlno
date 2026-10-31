@@ -4,7 +4,7 @@
 #include <array>
 #include <vector>
 
-#include "types.hpp"
+#include "../basis/types.hpp"
 
 namespace tlno::core::basis {
 

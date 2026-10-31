@@ -2,6 +2,7 @@
 #define TLNO_CORE_BASIS_TYPES_HPP
 
 #include <array>
+#include <cstddef>
 #include <string>
 #include <vector>
 
@@ -35,7 +36,26 @@ struct Shell {
 
 struct BasisBuildResult {
     std::vector<Shell> basis;
+    std::vector<int> nuclear_charges;
+    std::vector<std::array<double, 3>> nuclear_centers;
     int electron_count = 0;
+};
+
+struct DenseMatrix {
+    int size = 0;
+    std::vector<double> values;
+
+    explicit DenseMatrix(int n = 0)
+        : size(n),
+          values(static_cast<std::size_t>(n) * static_cast<std::size_t>(n), 0.0) {}
+    
+    double& operator()(int row, int col) {
+        return values[static_cast<std::size_t>(row) * static_cast<std::size_t>(size) + static_cast<std::size_t>(col)];
+    }
+
+    double operator()(int row, int col) const {
+        return values[static_cast<std::size_t>(row) * static_cast<std::size_t>(size) + static_cast<std::size_t>(col)];
+    }
 };
 
 } // namespace tlno::core::basis

@@ -49,7 +49,7 @@ double overlap_1d(int left_l,
                   double right_exponent) {
     if (left_l < 0 || right_l < 0) {
         throw std::runtime_error(
-            "Shell angular momenta must not be nonnegative.");
+            "Shell angular momenta must be nonnegative.");
     }
     const int total_l = left_l + right_l;
     if (total_l == 0) return 1.0;

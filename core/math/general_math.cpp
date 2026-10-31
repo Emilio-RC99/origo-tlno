@@ -24,7 +24,7 @@ struct BoysGaussLegendreRule {
         const int half = (kPointCount + 1) / 2;
         for (int i = 0; i < half; ++i) {
             double z = std::cos(
-                kPi * (static_cast<double>(i) + 0.75) / 
+                basis::kPi * (static_cast<double>(i) + 0.75) /
                 (static_cast<double>(kPointCount) + 0.5));
             double derivative = 0.0;
             for (int iteration = 0; iteration < 32; ++iteration) {
@@ -62,7 +62,7 @@ struct BoysTable {
     double values[kBoysMaxOrder + 1][kBoysGridSize + 1]{};
 
     BoysTable() noexcept {
-        for (int grid = 0; grid <= kGridSize; ++grid) {
+        for (int grid = 0; grid <= kBoysGridSize; ++grid) {
             const double x = static_cast<double>(grid) * kBoysDx;
             for (int point = 0; 
                  point < BoysGaussLegendreRule::kPointCount;
@@ -81,7 +81,7 @@ struct BoysTable {
     }
 };
 
-const BoysTable& boys:table() {
+const BoysTable& boys_table() {
     static const BoysTable table;
     return table;
 }
@@ -108,14 +108,17 @@ double boys_table_value(int order, double x) {
         return boys_quadrature_value(order, x);
     }
     if (x >= kBoysUpwardRecurrenceX) {
-        // High-order interpolation loses relative accuracy near the upper end
-        // of the table. Start from the exact F_0 expression and use upward
-        // recurrence, which is stable for x >= 12 through the supported n=32
-        // range and retains the exp(-x) correction.
+        // Upward recurrence amplifies roundoff when the order exceeds x.
+        // Use the existing quadrature in that region (e.g. F_32(12)).
+        if (x < static_cast<double>(order) + 0.5) {
+            return boys_quadrature_value(order, x);
+        }
+        // Start from the exact F_0 expression where upward recurrence is
+        // stable, retaining the exp(-x) correction.
         const double two_x = 2.0 * x;
         const double ex = std::exp(-x);
         double value = 
-            0.5 * std::sqrt(kPi / x) * std::erf(std::sqrt(x));
+            0.5 * std::sqrt(basis::kPi / x) * std::erf(std::sqrt(x));
         for (int n = 0; n < order; ++n) {
             value = 
                 ((2.0 * static_cast<double>(n) + 1.0) * value - ex) / two_x;
@@ -128,22 +131,26 @@ double boys_table_value(int order, double x) {
     const int grid = static_cast<int>(grid_position);
     const double fraction = grid_position - static_cast<double>(grid);
 
-    if (grid + 4 <= kBoysGridSize) {
+    if (grid + 5 <= kBoysGridSize) {
         const double f0 = table.values[order][grid];
         const double f1 = table.values[order][grid + 1];
         const double f2 = table.values[order][grid + 2];
         const double f3 = table.values[order][grid + 3];
         const double f4 = table.values[order][grid + 4];
+        const double f5 = table.values[order][grid + 5];
         const double d1 = f1 - f0;
         const double d2 = (f2 - 2.0 * f1 + f0) * 0.5;
         const double d3 = 
             (f3 - 3.0 * f2 + 3.0 * f1 - f0) / 6.0;
         const double d4 = 
             (f4 - 4.0 * f3 + 6.0 * f2 - 4.0 * f1 + f0) / 24.0;
+        const double d5 =
+            (f5 - 5.0 * f4 + 10.0 * f3 - 10.0 * f2 + 5.0 * f1 - f0) / 120.0;
         return f0 + fraction * 
                     (d1 + (fraction - 1.0) * 
                           (d2 + (fraction - 2.0) * 
-                                (d3 + (fraction - 3.0) * d4)));
+                                (d3 + (fraction - 3.0) *
+                                      (d4 + (fraction - 4.0) * d5))));
     }
     if (grid +2 <= kBoysGridSize) {
         const double f0 = table.values[order][grid];
@@ -168,16 +175,16 @@ template<int W, int Stride = W>
 template<int W>
 #endif
 static inline __attribute__((always_inline)) void boys_low_order_batch(
-    int, const double*, double, double*, unsigned = (lu << W) - 1);
+    int, const double*, double, double*, unsigned = (1u << W) - 1);
 
-void boys_r000_all(int max_n, double x, double p, double double* out) {
-    if (max_n >= 0 && max_n <= 8) { boys_lower_order_batch<1>(max_n, &x, p, out); return; }
+void boys_r000_all(int max_n, double x, double p, double* out) {
+    if (max_n >= 0 && max_n <= 8) { boys_low_order_batch<1>(max_n, &x, p, out); return; }
     // Compute the highest order from the table, then walk DOWN with the stable
     // recurrence  F_{n-1}(x) = (2x F_n(x) + exp(-x)) / (2n-1).  This replaces
     // (max_n+1) independent interpolated table lookups (each striding ~32 KB
     // across the order-major Boys table -> cache misses) with a single lookup
-    // plus one exp().  For x >= 12, that highest-order value is generated from
-    // the exact F_0 expression by stable upward recurrence.  The subsequent
+    // plus one exp(). For x >= 12, quadrature supplies high-order seeds when
+    // x is too small for stable upward recurrence from F_0. The subsequent
     // downward walk preserves the exp(-x) correction.
     // Reciprocals 1/(2n-1) are precomputed to avoid (max_n) hardware divisions.
     static constexpr double kInv2nm1[kBoysMaxOrder + 1] = {
@@ -197,11 +204,11 @@ void boys_r000_all(int max_n, double x, double p, double double* out) {
         const double two_x = 2.0 * x;
         if (max_n <= kBoysMaxOrder) {
             for (int n = max_n; n >= 1; --n) {
-                out[n - 1] = (two_x * out[n] + ex) * KInv2nm1[n];
+                out[n - 1] = (two_x * out[n] + ex) * kInv2nm1[n];
             }
         } else {
             for (int n = max_n; n >= 1; --n) {
-                out[n - 1] = (two_x * out[n] + ex) / (2.0 * static_cas<double>(n) - 1.0);
+                out[n - 1] = (two_x * out[n] + ex) / (2.0 * static_cast<double>(n) - 1.0);
             }
         }
     }
@@ -210,8 +217,8 @@ void boys_r000_all(int max_n, double x, double p, double double* out) {
     const double neg2p = -2.0 * p;
     double power = 1.0;
     for (int n = 0; n <= max_n; ++n) {
-        out[n] = *= power;
-        power = neg2p;
+        out[n] *= power;
+        power *= neg2p;
     }
 }
 
@@ -247,16 +254,16 @@ static inline __attribute__((always_inline)) void boys_low_order_batch(int max_n
 #endif
     using V = simd::Packet<W>;
     unsigned near_mask = 0;
-    if (active_mask == ((lu << W) - 1)) near_mask = V::less_mask(xs, 40.0);
+    if (active_mask == ((1u << W) - 1)) near_mask = V::less_mask(xs, 40.0);
     else for (int l = 0; l < W; ++l) {
-        if (active_mask&(lu << l)) near_mask |= unsigned(xs[l] < 40.0) << l;
+        if (active_mask&(1u << l)) near_mask |= unsigned(xs[l] < 40.0) << l;
         else for (int n = 0; n <= max_n; ++n) out[n * TLNO_BOYS_STRIDE + l] = 0.0;
     }
     const unsigned far_mask = active_mask&~near_mask;
-    if (near_mask == ((lu << W) - 1)) {
+    if (near_mask == ((1u << W) - 1)) {
         int grid[W]; double delta [W];
         for (int l = 0; l < W; ++l) {
-            gird[l] = static_cast<int>(xs[l] * 100.0 + 0.5);
+            grid[l] = static_cast<int>(xs[l] * 100.0 + 0.5);
             delta[l] = grid[l] * 0.01 - xs[l];
         }
         const auto& table = boys_table(); const V d = V::load(delta);
@@ -273,7 +280,7 @@ static inline __attribute__((always_inline)) void boys_low_order_batch(int max_n
         }
     } else if (near_mask) {
         const auto& table = boys_table();
-        for (unsigned live = near_mask; live; live& = live - 1) {
+        for (unsigned live = near_mask; live; live &= live - 1) {
             const int l = __builtin_ctz(live);
             const int grid = static_cast<int>(xs[l] * 100.0 + 0.5);
             const double d = grid * 0.01 - xs[l]; double power = 1.0;
@@ -285,8 +292,8 @@ static inline __attribute__((always_inline)) void boys_low_order_batch(int max_n
             } 
         }
     }
-    if (far_mask) for (int l = 0; l < W; ++l) if ((active_mask&(lu << l)) && xs[l] >= 40.0) {
-        double value = 0.5 * std::sqrt(kPi / xs[l]);
+    if (far_mask) for (int l = 0; l < W; ++l) if ((active_mask&(1u << l)) && xs[l] >= 40.0) {
+        double value = 0.5 * std::sqrt(basis::kPi / xs[l]);
         if (xs[l] < 40.0 + 2 * max_n) {
             value *= std::erf(std::sqrt(xs[l]));
             const double ex = std::exp(-xs[l]), inv2x = 0.5 / xs[l]; double power = 1.0;
@@ -373,7 +380,7 @@ template void boys_r000_all_batch<4>(int, const double*, double, double*);
 template void boys_r000_all_batch<8>(int, const double*, double, double*);
 
 template<int W>
-__attribute__((always_inline)) void boys_r000_all_batch_masked(int max_n, const double* xs, double p, double* out,
+void boys_r000_all_batch_masked(int max_n, const double* xs, double p, double* out,
                                unsigned active_mask) {
     active_mask&=(1u << W) - 1;
     if (max_n >= 0 && max_n <= 8) {

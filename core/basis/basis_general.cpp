@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "shell_contract.hpp"
+#include "../shell/shell_contract.hpp"
 #include "types.hpp"
 #include "get_sto3g_params.hpp"
 #include "get_4_31g_params.hpp"
@@ -89,6 +89,8 @@ BasisBuildResult build_basis_general(
     }
 
     BasisBuildResult result;
+    result.nuclear_centers = molecule.coords;
+    result.nuclear_charges.resize(molecule.symbols.size());
     for (std::size_t atom_index = 0; atom_index < molecule.symbols.size();
          ++atom_index) {
         const RawAtomBasis atom = 
@@ -98,6 +100,7 @@ BasisBuildResult build_basis_general(
             result.basis.push_back(
                 make_shell(raw_shell, molecule.coords[atom_index]));
         }
+        result.nuclear_charges[atom_index] = atom.charge;
     }
 
     result.electron_count -= molecule.charge;
