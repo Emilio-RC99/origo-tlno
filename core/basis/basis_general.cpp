@@ -98,7 +98,8 @@ BasisBuildResult build_basis_general(
         result.electron_count += atom.charge;    
         for (const auto& raw_shell : atom.shells) {
             result.basis.push_back(
-                make_shell(raw_shell, molecule.coords[atom_index]));
+                tlno::core::shell::make_shell(
+                    raw_shell, molecule.coords[atom_index]));
         }
         result.nuclear_charges[atom_index] = atom.charge;
     }
