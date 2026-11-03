@@ -1,0 +1,14 @@
+project = OrigoTLNO one-electron workflow
+workflow_root = @PROJECT_SOURCE_DIR@
+compiler_id = @CMAKE_CXX_COMPILER_ID@
+compiler_version = @CMAKE_CXX_COMPILER_VERSION@
+build_type = @CMAKE_BUILD_TYPE@
+simd = @TLNO_SIMD@
+nuclear_lanes_override = @TLNO_NUCLEAR_LANES@
+fast_math = @TLNO_FAST_MATH@
+lto = @TLNO_ENABLE_LTO@
+cxx_flags = @CMAKE_CXX_FLAGS@
+cxx_flags_release = @CMAKE_CXX_FLAGS_RELEASE@
+cxx_flags_relwithdebinfo = @CMAKE_CXX_FLAGS_RELWITHDEBINFO@
+openmp_flags = @OpenMP_CXX_FLAGS@
+compile_commands = compile_commands.json

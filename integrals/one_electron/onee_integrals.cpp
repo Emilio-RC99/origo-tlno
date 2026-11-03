@@ -428,8 +428,8 @@ void contracted_shell_block_overlap_kinetic(
     const int la_max = group_a.L;
     const int lb_max = group_b.L;
 
-#define TLNO_ST_CASE(LA, LB) \ 
-        case (LA) * 4 + (LB): \
+#define TLNO_ST_CASE(LA, LB)\
+        case (LA) * 4 + (LB):\
             overlap_kinetic_impl<LA, LB>(group_a, group_b, spp, overlap_block, kinetic_block, min_abs_overlap); \
             return;
 
@@ -898,9 +898,9 @@ void contracted_shell_block_nuclear(
     const int la_max = group_a.L;
     const int lb_max = group_b.L;
 
-#define TLNO_NUC_CASE(LA, LB) \
-    case (LA) * 4 + (LB): \ 
-        nuclear_general_impl<LA, LB>(group_a, group_b, spp, nuclear_block, nuclear_charges, nuclear_centers); \ 
+#define TLNO_NUC_CASE(LA, LB)\
+    case (LA) * 4 + (LB):\
+        nuclear_general_impl<LA, LB>(group_a, group_b, spp, nuclear_block, nuclear_charges, nuclear_centers);\
         return;
 
     if (la_max <= 3 && lb_max <= 3) {
