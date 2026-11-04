@@ -1,5 +1,5 @@
-#include "shell_contract.hpp"
-#include "shell_math.hpp"
+#include "core/shell/shell_contract.hpp"
+#include "core/shell/shell_math.hpp"
 
 #include <cmath>
 #include <stdexcept>

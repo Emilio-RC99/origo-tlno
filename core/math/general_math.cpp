@@ -3,8 +3,8 @@
 #include <cmath>
 #include <vector>
 
-#include "../basis/types.hpp"
-#include "../simd/packet.hpp"
+#include "core/basis/types.hpp"
+#include "core/simd/packet.hpp"
 
 namespace tlno::core::math {
 namespace {

@@ -9,9 +9,9 @@
 #include <omp.h>
 #endif
 
-#include "onee_integrals.hpp"
-#include "../../core/math/general_math.hpp"
-#include "../../core/shell/cart2sph.hpp"
+#include "integrals/one_electron/onee_integrals.hpp"
+#include "core/math/general_math.hpp"
+#include "core/shell/cart2sph.hpp"
 
 #ifndef TLNO_ONEE_HERMITE_CACHE_BYTES
 #define TLNO_ONEE_HERMITE_CACHE_BYTES (16 * 1024 * 1024)

@@ -5,15 +5,15 @@
 #include <stdexcept>
 #include <string>
 
-#include "../shell/shell_contract.hpp"
-#include "types.hpp"
-#include "get_sto3g_params.hpp"
-#include "get_4_31g_params.hpp"
-#include "get_6_31g_params.hpp"
-#include "get_6_31g_d_params.hpp"
-#include "get_6_31g_dp_params.hpp"
-#include "get_def2_svp_params.hpp"
-#include "get_def2_tzvp_params.hpp"
+#include "core/shell/shell_contract.hpp"
+#include "core/basis/types.hpp"
+#include "core/basis/get_sto3g_params.hpp"
+#include "core/basis/get_4_31g_params.hpp"
+#include "core/basis/get_6_31g_params.hpp"
+#include "core/basis/get_6_31g_d_params.hpp"
+#include "core/basis/get_6_31g_dp_params.hpp"
+#include "core/basis/get_def2_svp_params.hpp"
+#include "core/basis/get_def2_tzvp_params.hpp"
 
 namespace tlno::core::basis {
 namespace {

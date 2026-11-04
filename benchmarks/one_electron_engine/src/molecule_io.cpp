@@ -1,10 +1,13 @@
 #include "molecule_io.hpp"
+#include "core/math/binary64.hpp"
 
 #include <cctype>
 #include <cmath>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+
+using tlno::core::math::is_finite_binary64;
 
 namespace tlno::benchmarks::onee {
 namespace {
@@ -37,7 +40,7 @@ void append_atom_line(
     double y = 0.0;
     double z = 0.0;
     if (!(input >> symbol >> x >> y >> z) ||
-        !std::isfinite(x) || !std::isfinite(y) || !std::isfinite(z)) {
+        !is_finite_binary64(x) || !is_finite_binary64(y) || !is_finite_binary64(z)) {
         throw std::runtime_error(
             "bad coordinate line " + std::to_string(line_number) + ": " + path);
     }

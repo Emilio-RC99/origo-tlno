@@ -3,6 +3,7 @@
 #include "integrals/one_electron/onee_integrals.hpp"
 #include "core/math/general_math.hpp"
 #include "core/shell/shell_contract.hpp"
+#include "core/math/binary64.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -16,10 +17,11 @@ using tlno::core::basis::RawShell;
 using tlno::core::basis::Shell;
 using tlno::core::shell::make_shell;
 using tlno::core::math::boys_r000_all;
+using tlno::core::math::is_finite_binary64;
 using tlno::core::math::boys_r000_all_batch;
 
 static void close(double got, double ref, double tolerance, const char* what) {
-    if (!std::isfinite(got) || std::abs(got - ref) > tolerance * (1.0 + std::abs(ref))) {
+    if (!is_finite_binary64(got) || std::abs(got - ref) > tolerance * (1.0 + std::abs(ref))) {
         std::fprintf(stderr, "%s: %.17g != %.17g\n", what, got, ref);
         std::exit(1);
     }

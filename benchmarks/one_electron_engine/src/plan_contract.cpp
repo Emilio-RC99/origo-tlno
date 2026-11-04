@@ -3,6 +3,8 @@
 #include "core/shell/cart2sph.hpp"
 #include "integrals/one_electron/onee_matrices.hpp"
 #include "core/basis/basis_general.hpp"
+#include "core/math/binary64.hpp"
+
 #include <algorithm>
 #include <cmath>
 #include <iostream>
@@ -16,6 +18,7 @@
 using namespace tlno::integrals::onee;
 using tlno::core::basis::DenseMatrix;
 namespace shell = tlno::core::shell;
+using tlno::core::math::is_finite_binary64;
 
 static auto pair_keys(const OneElectronPlan& plan) {
     std::vector<std::tuple<int,int,bool,bool>> keys;
@@ -36,7 +39,7 @@ static double compare(const OneElectronMatrices& actual, const OneElectronMatric
         for (std::size_t i = 0; i < a[op]->values.size(); ++i) {
             const double got = a[op]->values[i], ref=b[op]->values[i];
             worst = std::max(worst, std::abs(got - ref));
-            if (!std::isfinite(got) || std::abs(got-ref) > 2e-10 + 2e-11*std::abs(ref))
+            if (!is_finite_binary64(got) || std::abs(got-ref) > 2e-10 + 2e-11*std::abs(ref))
                 throw std::runtime_error("Matrix numerical mismatch.");
         }
         for (int i = 0; i < a[op]->size; ++i) for (int j = 0; j < i; ++j)

@@ -4,7 +4,7 @@
 #include <string>
 
 #include "types.hpp"
-#include "../molecule/molecule_spec.hpp"
+#include "core/molecule/molecule_spec.hpp"
 
 namespace tlno::core::basis {
 

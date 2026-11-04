@@ -1,5 +1,5 @@
-#include "shell_math.hpp"
-#include "../basis/types.hpp"
+#include "core/shell/shell_math.hpp"
+#include "core/basis/types.hpp"
 
 #include <algorithm>
 #include <cmath>

@@ -1,0 +1,5 @@
+/build*/
+/benchmarks/one_electron_engine/build*/
+/benchmarks/one_electron_engine/results/
+__pycache__/
+*.pyc

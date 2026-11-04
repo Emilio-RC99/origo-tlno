@@ -1,5 +1,5 @@
-#ifndef TLNO_ONE_ELECTRON_ONEE_INTEGRALS_HPP
-#define TLNO_ONE_ELECTRON_ONEE_INTEGRALS_HPP
+#ifndef TLNO_INTEGRALS_ONE_ELECTRON_ONEE_INTEGRALS_HPP
+#define TLNO_INTEGRALS_ONE_ELECTRON_ONEE_INTEGRALS_HPP
 
 #include "../../core/basis/types.hpp"
 #include "../../core/shell/shell_math.hpp"

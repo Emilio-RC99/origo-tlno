@@ -1,12 +1,12 @@
-#include "onee_integrals.hpp"
+#include "integrals/one_electron/onee_integrals.hpp"
 
 #include <stdexcept>
 #include <algorithm>
 #include <cmath>
 #include <vector>
 
-#include "../../core/math/general_math.hpp"
-#include "../../core/simd/packet.hpp"
+#include "core/math/general_math.hpp"
+#include "core/simd/packet.hpp"
 
 // Nuclear-attraction SIMD lane count (doubles per vector register). Overridable
 // at compile time, e.g. -DTLNO_NUCLEAR_LANES = 1 for the lane ablation study.
