@@ -1,5 +1,5 @@
 // Exercise the actual production plan, scatter and OpenMP ownership.
-#include "molecule_io.hpp"
+#include "benchmarks/common/molecule_io.hpp"
 #include "core/shell/cart2sph.hpp"
 #include "integrals/one_electron/onee_matrices.hpp"
 #include "core/basis/basis_general.hpp"

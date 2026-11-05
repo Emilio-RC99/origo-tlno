@@ -1,14 +1,11 @@
-add_library(onee_molecule_io STATIC src/molecule_io.cpp)
-target_link_libraries(onee_molecule_io PUBLIC tlno_build_options)
-
 add_library(tlno_onee_capi SHARED src/onee_capi.cpp src/basis_export.cpp)
 set_target_properties(tlno_onee_capi PROPERTIES OUTPUT_NAME tlno_onee)
-target_link_libraries(tlno_onee_capi PRIVATE tlno_onee_engine tlno_basis onee_molecule_io)
+target_link_libraries(tlno_onee_capi PRIVATE tlno_onee_engine tlno_basis tlno_benchmark_io)
 configure_file(build_info.txt.in "${CMAKE_BINARY_DIR}/onee_build_info.txt" @ONLY)
 
 foreach(tool onee_timing onee_class_profile plan_contract)
     add_executable(${tool} src/${tool}.cpp)
-    target_link_libraries(${tool} PRIVATE tlno_onee_engine tlno_basis onee_molecule_io)
+    target_link_libraries(${tool} PRIVATE tlno_onee_engine tlno_basis tlno_benchmark_io)
 endforeach()
 foreach(tool bench_shell_classes transfer_contract)
     add_executable(${tool} src/${tool}.cpp)

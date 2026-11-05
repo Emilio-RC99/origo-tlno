@@ -1,5 +1,5 @@
 #include "core/basis/basis_general.hpp"
-#include "molecule_io.hpp"
+#include "benchmarks/common/molecule_io.hpp"
 #include "integrals/one_electron/onee_matrices.hpp"
 
 #include <algorithm>

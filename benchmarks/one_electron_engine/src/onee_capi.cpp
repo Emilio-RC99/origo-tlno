@@ -12,7 +12,7 @@
 // return nothing to copy; tlno_onee_copy() exposes the result for validation
 // outside the timed region.
 
-#include "molecule_io.hpp"
+#include "benchmarks/common/molecule_io.hpp"
 #include "core/basis/basis_general.hpp"
 #include "integrals/one_electron/onee_matrices.hpp"
 

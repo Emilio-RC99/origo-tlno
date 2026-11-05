@@ -5,7 +5,7 @@
 // used by the cached production evaluator and reports one complete traversal of
 // every unordered group pair in each angular-momentum class.  S+T is timed as
 // the fused TLNO kernel; V is timed separately.
-#include "molecule_io.hpp"
+#include "benchmarks/common/molecule_io.hpp"
 #include "integrals/one_electron/onee_integrals.hpp"
 #include "integrals/one_electron/onee_matrices.hpp"
 #include "core/basis/basis_general.hpp"

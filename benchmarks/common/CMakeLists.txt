@@ -1,0 +1,2 @@
+add_library(tlno_benchmark_io STATIC molecule_io.cpp)
+target_link_libraries(tlno_benchmark_io PUBLIC tlno_build_options)

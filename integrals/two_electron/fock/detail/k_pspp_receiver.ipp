@@ -5,7 +5,7 @@
 // Included inside the ERI producer translation unit at its original scope and
 // declaration position, preserving compile-time specialization and inlining.
 
-#ifdef TLNO_RYS_DIRECT_EXCHANGE
+#if defined(TLNO_RYS_DIRECT_EXCHANGE) && defined(__AVX2__) && defined(__FMA__)
 // Close pp|pp while its radial accumulators are available.  Project one row
 // at a time and retain the four crossed 3x3 K tiles until the quartet closes.
 // Each ERI is read once; the output matrix receives at most 36 additions per

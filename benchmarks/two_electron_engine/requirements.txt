@@ -1,0 +1,5 @@
+# Numerical validation environment; mpmath is needed for high-precision Boys checks.
+numpy==2.2.6
+scipy==1.15.3
+pyscf==2.14.0
+mpmath==1.3.0
