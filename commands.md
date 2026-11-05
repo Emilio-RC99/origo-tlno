@@ -15,6 +15,12 @@ bash benchmarks/two_electron_engine/scripts/build_experiments.sh \
     rys_native_lane_ablation avx2
 ```
 
+```bash
+CXX=/usr/bin/g++ JOBS=2 \
+bash benchmarks/two_electron_engine/scripts/build_experiments.sh \
+    rys_native_lane_ablation avx2
+```
+
 The arguments are the CMake executable target, ISA (`avx2` by default, or `avx512`),
 and an optional build directory. The default directory is `build-experiments-<ISA>`.
 `JOBS` controls build parallelism (default 2). The wrapper uses GCC, Release, C++17,
